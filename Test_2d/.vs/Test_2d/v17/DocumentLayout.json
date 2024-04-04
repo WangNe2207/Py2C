@@ -1,0 +1,53 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\Ki6\\GraduationThesis\\Py2C\\Test_2d\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{6BEE3751-546C-43E3-B176-3DDEC6EF8411}|Test_2d\\Test_2d.vcxproj|D:\\Ki6\\GraduationThesis\\Py2C\\Test_2d\\Test_2d\\CNN.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{6BEE3751-546C-43E3-B176-3DDEC6EF8411}|Test_2d\\Test_2d.vcxproj|solutionrelative:Test_2d\\CNN.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6BEE3751-546C-43E3-B176-3DDEC6EF8411}|Test_2d\\Test_2d.vcxproj|D:\\Ki6\\GraduationThesis\\Py2C\\Test_2d\\Test_2d\\CNN_tb.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{6BEE3751-546C-43E3-B176-3DDEC6EF8411}|Test_2d\\Test_2d.vcxproj|solutionrelative:Test_2d\\CNN_tb.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "CNN.cpp",
+              "DocumentMoniker": "D:\\Ki6\\GraduationThesis\\Py2C\\Test_2d\\Test_2d\\CNN.cpp",
+              "RelativeDocumentMoniker": "Test_2d\\CNN.cpp",
+              "ToolTip": "D:\\Ki6\\GraduationThesis\\Py2C\\Test_2d\\Test_2d\\CNN.cpp",
+              "RelativeToolTip": "Test_2d\\CNN.cpp",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA8AAAAkAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-04-04T15:11:59.512Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "CNN_tb.cpp",
+              "DocumentMoniker": "D:\\Ki6\\GraduationThesis\\Py2C\\Test_2d\\Test_2d\\CNN_tb.cpp",
+              "RelativeDocumentMoniker": "Test_2d\\CNN_tb.cpp",
+              "ToolTip": "D:\\Ki6\\GraduationThesis\\Py2C\\Test_2d\\Test_2d\\CNN_tb.cpp",
+              "RelativeToolTip": "Test_2d\\CNN_tb.cpp",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-04-04T15:11:58.531Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
