@@ -15,11 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Input.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="CNN.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -35,6 +30,17 @@
     <ClCompile Include="Pool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Input.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="Test_Pool.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="Test_Weights.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CNN.h">

@@ -2,12 +2,13 @@ import random
 def CreateTestTXT():
 
     #Open a file named numbersmake.txt.
-    outfile = open('Input.txt', 'w')
+    outfile = open('Test_Pool.txt', 'w')
 
+    #71919 3072
     #Produce the numbers
-    for count in range(3072):
+    for count in range(27000):
         #Get a random number.
-        num = random.randint(0, 255)
+        num = count / 100
         outfile.write(str(num))
         outfile.write(' ')
 

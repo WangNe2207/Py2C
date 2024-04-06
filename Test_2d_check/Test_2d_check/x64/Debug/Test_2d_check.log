@@ -1,0 +1,13 @@
+﻿  CNN.cpp
+  CNN_tb.cpp
+D:\Ki6\GraduationThesis\Py2C\Test_2d_check\Test_2d_check\CNN.cpp(9,8): warning C4101: 'OutFlatten': unreferenced local variable
+D:\Ki6\GraduationThesis\Py2C\Test_2d_check\Test_2d_check\CNN.cpp(8,8): warning C4101: 'OutPool1': unreferenced local variable
+D:\Ki6\GraduationThesis\Py2C\Test_2d_check\Test_2d_check\CNN.cpp(11,8): warning C4101: 'OutDense1': unreferenced local variable
+D:\Ki6\GraduationThesis\Py2C\Test_2d_check\Test_2d_check\CNN.cpp(5,8): warning C4101: 'OutConv2D0': unreferenced local variable
+D:\Ki6\GraduationThesis\Py2C\Test_2d_check\Test_2d_check\CNN.cpp(7,8): warning C4101: 'OutConv2D1': unreferenced local variable
+D:\Ki6\GraduationThesis\Py2C\Test_2d_check\Test_2d_check\CNN.cpp(10,8): warning C4101: 'OutDense0': unreferenced local variable
+  Pool.cpp
+D:\Ki6\GraduationThesis\Py2C\Test_2d_check\Test_2d_check\Pool.cpp(39,2): warning C4102: 'loop_for_a_flatten': unreferenced label
+D:\Ki6\GraduationThesis\Py2C\Test_2d_check\Test_2d_check\Pool.cpp(41,3): warning C4102: 'loop_for_c_flatten': unreferenced label
+  Generating Code...
+  Test_2d_check.vcxproj -> D:\Ki6\GraduationThesis\Py2C\Test_2d_check\x64\Debug\Test_2d_check.exe

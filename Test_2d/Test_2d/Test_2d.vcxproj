@@ -19,14 +19,16 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Input.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="CNN.cpp" />
     <ClCompile Include="CNN_tb.cpp" />
     <ClCompile Include="Conv.cpp" />
     <ClCompile Include="Dense.cpp" />
     <ClCompile Include="Pool.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Input.txt" />
+    <Text Include="Test_Pool.txt" />
+    <Text Include="Test_Weights.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CNN.h" />

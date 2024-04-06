@@ -67,7 +67,7 @@ class Py2C:
         self.cnt_param = 0
         self.call_function = ""
         self.out = ""
-        self.full_source_CNN_cc.append(["", "InModel"])
+        self.full_source_CNN_cc.append(["", "&InModel[0]"])
         self.path_w = ["Conv.cpp", "Conv.h", "Pool.cpp", "Pool.h", "Dense.cpp", "Dense.h", "CNN.cpp", "CNN.h",
                        "CNN_tb.cpp"]
         print("Model Information")
@@ -211,16 +211,7 @@ class Py2C:
                     self.fxp_inc = self.fxp_include
                 else:
                     self.fxp_inc = ""
-                source_Pool_cc = self.fxp_inc + "void Max_Pool2D_" + str(
-                    self.index_P2D) + "(" + self.type + " input_MaxPooling[" + str(in_shape[0]*in_shape[1]*(in_shape[2]+2)) + "], " + self.type + " output_MaxPooling[" + str(out_shape[0]*out_shape[1]*out_shape[2]) + "]){\n\t" + self.type + " pool = 0.0;\n\t" + self.type + " value=0.0;\n\tint s;\n\tloop_for_channel_pool_" + str(
-                    self.index_P2D) + ":\n\tfor (int z = 0; z < " + str(
-                    out_shape[0]) + "; z++){\n\t\tloop_for_weight_pool_" + str(
-                    self.index_P2D) + ":\n\t\tfor (int y = 0; y < " + str(out_shape[
-                                                                            1]) + "; y++){\n\t\t\ts=y+y;\n\t\t\tpool = input_MaxPooling[" + str(in_shape[
-                                                                            1]+2) + "*z+s];\n\t\t\tvalue = input_MaxPooling[" + str(in_shape[
-                                                                            1]+2) + "*z+s+1];\n\t\t\tif (value > pool)\n\t\t\t\tpool=value;\n\t\t\tvalue = input_MaxPooling[" + str(in_shape[
-                                                                            1]+2) + "*z+s+2];\n\t\t\tif (value > pool) pool=value;\n\t\t\toutput_MaxPooling[" + str(out_shape[
-                                                                            1]) + "*z+y]=pool;\n\t\t}\n\t}\n}\n"
+                source_Pool_cc = self.fxp_inc + "void Max_Pool2D_" + str(self.index_P2D) + "(" + self.type + " input_MaxPooling[" + str(in_shape[0]*in_shape[1]*in_shape[2]) + "], " + self.type + " output_MaxPooling[" + str(out_shape[0]*out_shape[1]*out_shape[2]) + "]){\n\tint PoolSize = 2;\n\tfor (int i = 0; i < " + str(out_shape[0]) + "; i++){\n\t\tfor (int z = 0; z < " + str(out_shape[1]) + "; z++){\n\t\t\tfor (int y = 0; y < " + str(out_shape[1]) + "; y++){\n\t\t\t\tfor (int c = 0; c < 3; c++){\n\t\t\t\t\tfor (int h = 0; h < PoolSize; h++){\n\t\t\t\t\t\tfor (int w = 0; w < PoolSize; w++){\n\t\t\t\t\t\t\tint Pool_index = " +str(out_shape[1])+ " * " + str(out_shape[2]) + " * c + " + str(out_shape[2]) + " * " + "(h + z) + w + y;"+"\n\t\t\t\t\t\t\t" + self.type + " Pool_value = input_MaxPooling[Pool_index];" + "\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t}\n}\n"
                 source_Pool_hh = self.fxp_inc + "void Max_Pool2D_" + str(
                     self.index_P2D) + "(" + self.type + " input_MaxPooling[" + str(
                     in_shape[0]*(in_shape[1] + 2)) + "], " + self.type + " output_MaxPooling[" + str(
@@ -234,11 +225,11 @@ class Py2C:
                         ["\tPadding_Pool2D_" + str(self.index_P2D) + "(", "OutPadPool" + str(self.index_P2D), "", ""])
                 self.call_function += "\t" + self.type + " OutPool" + str(self.index_P2D) + "[" + str(
                     out_shape[0]*
-                    out_shape[1]) + "];\n"
+                    out_shape[1]*out_shape[2]) + "];\n"
                 self.full_source_CNN_cc.append(
                     ["\tMax_Pool2D_" + str(self.index_P2D) + "(", "OutPool" + str(self.index_P2D), "", ""])
                 if self.config["layers"][i]['config']['padding'] == 'same':
-                    source_pad_pool_cc = "void Padding_Pool2D_" + str(self.index_P2D) + "(" + self.type + " input_Pad_Pool[" + str(in_shape[0]*in_shape[1]*in_shape[2]) + "], " + self.type + " output_Pad_Pool[" + str(in_shape[0]*in_shape[1]*(in_shape[2] + 2)) + "]){\n\tloop_for_3_channel_pad_"+str(self.index_P2D)+":\n\tfor (int c = 0; c < "+ str(in_shape[1])+ "; c++)" +"\n\t\tloop_for_channel_pad_" + str(self.index_P2D) + ":\n\t\tfor (int n = 0; n < " + str(in_shape[1]) + "; n++){\n\t\t\tloop_for_weight_pad_" + str(self.index_P2D) + ":\n\t\t\tfor (int i = 0; i < " + str(in_shape[2] + 2) + "; i++){\n\t\t\t\tif (i < 1 || i >= " + str(in_shape[2] + 2 - 1) + ") output_Pad_Pool["+str(in_shape[2] + 2)+"*n*c+i]=0; else output_Pad_Pool["+str(in_shape[1] + 2)+"*n*c+i]=input_Pad_Pool["+str(in_shape[1])+"*n*c+i-1];\n\t\t\t}\n\t\t}\n\t}\n}\n"
+                    source_pad_pool_cc = "void Padding_Pool2D_" + str(self.index_P2D) + "(" + self.type + " input_Pad_Pool[" + str(in_shape[0]*in_shape[1]*in_shape[2]) + "], " + self.type + " output_Pad_Pool[" + str(in_shape[0]*in_shape[1]*(in_shape[2] + 2)) + "]){\n\tloop_for_3_channel_pad_"+str(self.index_P2D)+":\n\tfor (int c = 0; c < "+ str(in_shape[1])+ "; c++){" +"\n\t\tloop_for_channel_pad_" + str(self.index_P2D) + ":\n\t\tfor (int n = 0; n < " + str(in_shape[1]) + "; n++){\n\t\t\tloop_for_weight_pad_" + str(self.index_P2D) + ":\n\t\t\tfor (int i = 0; i < " + str(in_shape[2] + 2) + "; i++){\n\t\t\t\tif (i < 1 || i >= " + str(in_shape[2] + 2 - 1) + ") output_Pad_Pool["+str(in_shape[2] + 2)+"*n*c+i]=0; else output_Pad_Pool["+str(in_shape[1] + 2)+"*n*c+i]=input_Pad_Pool["+str(in_shape[1])+"*n*c+i-1];\n\t\t\t}\n\t\t}\n\t}\n}\n"
                     source_pad_pool_hh = "void Padding_Pool2D_" + str(
                         self.index_P2D) + "(" + self.type + " input_Pad_Pool[" + str(
                         in_shape[0]*in_shape[1]) + "], " + self.type + " output_Pad_Pool[" + str(
@@ -443,7 +434,7 @@ class Py2C:
                                           self.full_source_CNN_cc[i][1] + "," + self.full_source_CNN_cc[i][2] + "," + \
                                           self.full_source_CNN_cc[i][3] + ");\n"
         self.source_CNN = "void CNN(" + self.type + " InModel[" + str(self.model.layers[0].input.shape[2]*
-            self.model.layers[0].input.shape[1]) + "]," + self.type + self.out + "," + self.type + " Weights[" + str(
+            self.model.layers[0].input.shape[1]*self.model.layers[0].input.shape[3]) + "]," + self.type + self.out + "," + self.type + " Weights[" + str(
             self.cnt_param) + "]){\n" + self.call_function + "}\n"
 
         self.source_CNN_hh = "void CNN(" + self.type + " InModel[" + str(
@@ -454,11 +445,11 @@ class Py2C:
         self.source_CNN_tb = "#include <conio.h>\n#include <stdio.h>\n#include <stdlib.h>\n#include <math.h>\n#include <string>\n#include <fstream>\n#include <iostream>\n#include \"CNN.h\"\n#include \"Conv.h\"\n#include \"Pool.h\"\n#include \"Dense.h\"\n" + self.fxp_inc + "int main(){\n\t" + self.type + " " + \
                              self.out.split("&")[-1] + ";\n\t" + self.type + "* Weights = (" + self.type + "*)malloc(" + str(
             self.cnt_param) + " * sizeof(" + self.type + "));\n\tfloat tmp;\n\tFILE* Weight;\n\terrno_t fp = fopen_s(&Weight,\"Weights.txt\", \"r\");\n\tfor (int i = 0; i < " + str(
-            self.cnt_param) + "; i++){\n\t\tfscanf_s(Weight, \"%f\", &tmp);\n\t\t*(Weights + i)=tmp;\n\t}\n\tfclose(Weight);" + "\n\t//int choose=...;\n\t//int d=...;\n\t//FILE* Input;\n\t//" + self.type + "* InModel = (" + self.type + "*)malloc((d * " + str(
+            self.cnt_param) + "; i++){\n\t\tfscanf_s(Weight, \"%f\", &tmp);\n\t\t*(Weights + i)=tmp;\n\t}\n\tfclose(Weight);" + "\n\t//int d=...;\n\t//FILE* Input;\n\t//" + self.type + "* InModel = (" + self.type + "*)malloc((d * " + str(
             self.model.layers[0].input.shape[2]) + " * " + str(self.model.layers[0].input.shape[
                                                                    1]) + ") * sizeof(" + self.type + "));\n\t//fp = fopen_s(&Input,\"Input.txt\", \"r\");\n\t//for (int i = 0; i < " + "d * " + str(
             self.model.layers[0].input.shape[2]) + " * " + str(self.model.layers[0].input.shape[
-                                                                   1]) + "; i++){\n\t\t//fscanf(Input, \"%f\", &tmp);\n\t\t//*(InModel + i)=tmp;\n\t//}\n\t//fclose(Input);" + "\n\tCNN(&InModel[choose]," + \
+                                                                   1]) + "; i++){\n\t\t//fscanf_s(Input, \"%f\", &tmp);\n\t\t//*(InModel + i)=tmp;\n\t//}\n\t//fclose(Input);" + "\n\tCNN(InModel," + \
                              self.full_source_CNN_cc[-1][1] + ", Weights);\n\tstd::cout << OutModel;\n\treturn 0;\n}\n"
         if self.type == "fxp":
             self.fxp_inc = self.fxp_include
