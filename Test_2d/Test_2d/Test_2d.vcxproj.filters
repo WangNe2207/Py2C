@@ -15,30 +15,67 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CNN.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CNN_tb.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Conv.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Dense.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Pool.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="Input.txt">
+    <Text Include="Float_Weights.txt">
       <Filter>Resource Files</Filter>
     </Text>
-    <Text Include="Test_Pool.txt">
+    <Text Include="ImageTXT_1.txt">
       <Filter>Resource Files</Filter>
     </Text>
-    <Text Include="Test_Weights.txt">
+    <Text Include="ImageTXT_2.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="ImageTXT_3.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="ImageTXT_4.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="ImageTXT_5.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="ImageTXT_6.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="ImageTXT_7.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="ImageTXT_8.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="ImageTXT_9.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="ImageTXT_10.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="ImageTXT_11.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="ImageTXT_12.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="ImageTXT_13.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="ImageTXT_14.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="ImageTXT_15.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="ImageTXT_16.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="ImageTXT_17.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="ImageTXT_18.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="ImageTXT_19.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="ImageTXT_20.txt">
       <Filter>Resource Files</Filter>
     </Text>
   </ItemGroup>
@@ -55,5 +92,22 @@
     <ClInclude Include="Pool.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="CNN.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CNN_tb.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Conv.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Dense.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Pool.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

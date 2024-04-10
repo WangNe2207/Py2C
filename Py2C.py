@@ -207,11 +207,13 @@ class Py2C:
             if layer.find("max_pooling2d") >= 0:
                 in_shape = (self.model.layers[i - 1].input.shape[3], self.model.layers[i - 1].input.shape[1], self.model.layers[i - 1].input.shape[2])
                 out_shape = (self.model.layers[i - 1].output.shape[3], self.model.layers[i - 1].output.shape[1],self.model.layers[i - 1].output.shape[2])
+                strides = self.model.layers[i - 1].strides[0]
+                poolSize = self.model.layers[i - 1].pool_size[0]
                 if self.type == "fxp" and self.index_P2D == 0:
                     self.fxp_inc = self.fxp_include
                 else:
                     self.fxp_inc = ""
-                source_Pool_cc = self.fxp_inc + "void Max_Pool2D_" + str(self.index_P2D) + "(" + self.type + " input_MaxPooling[" + str(in_shape[0]*in_shape[1]*in_shape[2]) + "], " + self.type + " output_MaxPooling[" + str(out_shape[0]*out_shape[1]*out_shape[2]) + "]){\n\tint PoolSize = 2;\n\tfor (int i = 0; i < " + str(out_shape[0]) + "; i++){\n\t\tfor (int z = 0; z < " + str(out_shape[1]) + "; z++){\n\t\t\tfor (int y = 0; y < " + str(out_shape[1]) + "; y++){\n\t\t\t\tfor (int c = 0; c < 3; c++){\n\t\t\t\t\tfor (int h = 0; h < PoolSize; h++){\n\t\t\t\t\t\tfor (int w = 0; w < PoolSize; w++){\n\t\t\t\t\t\t\tint Pool_index = " +str(out_shape[1])+ " * " + str(out_shape[2]) + " * c + " + str(out_shape[2]) + " * " + "(h + z) + w + y;"+"\n\t\t\t\t\t\t\t" + self.type + " Pool_value = input_MaxPooling[Pool_index];" + "\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t}\n}\n"
+                source_Pool_cc = self.fxp_inc + "void Max_Pool2D_" + str(self.index_P2D) + "(" + self.type + " input_MaxPooling[" + str(in_shape[0]*in_shape[1]*in_shape[2]) + "], " + self.type + " output_MaxPooling[" + str(out_shape[0]*out_shape[1]*out_shape[2]) + "]){\n\tint PoolSize = " + str(poolSize) + ";\n\tint stride = " + str(strides) + ";\n\tint index = 0;\n\tfor (int i = 0; i < " + str(out_shape[0]) + "; i++){\n\t\tindex = 0;\n\t\tfor (int z = 0; z < " + str(out_shape[1]) + "; z++){\n\t\t\tfor (int y = 0; y < " + str(out_shape[1]) + "; y++){\n\t\t\t\t" + self.type + " max_c = 0.0;\n\t\t\t\tfor (int h = 0; h < PoolSize; h++){\n\t\t\t\t\tfor (int w = 0; w < PoolSize; w++){\n\t\t\t\t\t\tint Pool_index = " + str(in_shape[1]) + " * " + str(in_shape[2]) + " * i + " + str(in_shape[2]) + " * " + "h + " + str(in_shape[2]) + " * stride * z + w + y * stride;\n\t\t\t\t\t\t" + self.type + " Pool_value = input_MaxPooling[Pool_index];" + "\n\t\t\t\t\t\tif (Pool_value >= max_c) max_c = Pool_value;" + "\n\t\t\t\t\t}\n\t\t\t\t}"+"\n\t\t\t\tint outIndex = " + str(out_shape[1]) + " * " + str(out_shape[2]) + " * i + index;\n\t\t\t\toutput_MaxPooling[outIndex] = max_c;\n\t\t\t\tindex++;" + "\n\t\t\t}\n\t\t}\n\t}\n}\n"
                 source_Pool_hh = self.fxp_inc + "void Max_Pool2D_" + str(
                     self.index_P2D) + "(" + self.type + " input_MaxPooling[" + str(
                     in_shape[0]*(in_shape[1] + 2)) + "], " + self.type + " output_MaxPooling[" + str(
@@ -224,8 +226,7 @@ class Py2C:
                     self.full_source_CNN_cc.append(
                         ["\tPadding_Pool2D_" + str(self.index_P2D) + "(", "OutPadPool" + str(self.index_P2D), "", ""])
                 self.call_function += "\t" + self.type + " OutPool" + str(self.index_P2D) + "[" + str(
-                    out_shape[0]*
-                    out_shape[1]*out_shape[2]) + "];\n"
+                    out_shape[0] * out_shape[1] * out_shape[2]) + "];\n"
                 self.full_source_CNN_cc.append(
                     ["\tMax_Pool2D_" + str(self.index_P2D) + "(", "OutPool" + str(self.index_P2D), "", ""])
                 if self.config["layers"][i]['config']['padding'] == 'same':
@@ -305,12 +306,7 @@ class Py2C:
                 if len(self.model.layers[i - 1].input.shape) == 3:
                     in_shape = (self.model.layers[i - 1].input.shape[2], self.model.layers[i - 1].input.shape[1])
                     out_shape = self.model.layers[i - 1].output.shape[1]
-                    source_Flatten_cc = "void flatten(" + self.type + " input_Flatten[" + str(in_shape[0]*
-                        in_shape[1]) + "]," + self.type + " output_Flatten[" + str(
-                        out_shape) + "]){\n\tint hs = 0;\n\tloop_for_a_flatten:\n\tfor (int i = 0; i < " + str(
-                        in_shape[1]) + "; i++){\n\t\tloop_for_c_flatten:\n\t\tfor (int j = 0; j < " + str(in_shape[
-                                                                                                              0]) + "; j++){\n\t\t\toutput_Flatten[hs] = input_Flatten[" + str(in_shape[
-                                                                                                              1]) + "*j+i];\n\t\t\ths++;\n\t\t}\n\t}\n}\n"
+                    source_Flatten_cc = "void flatten(" + self.type + " input_Flatten[" + str(in_shape[0]*in_shape[1]) + "]," + self.type + " output_Flatten[" + str(out_shape) + "]){\n\tint hs = 0;\n\tloop_for_a_flatten:\n\tfor (int i = 0; i < " + str(in_shape[1]) + "; i++){\n\t\tloop_for_c_flatten:\n\t\tfor (int j = 0; j < " + str(in_shape[0]) + "; j++){\n\t\t\toutput_Flatten[hs] = input_Flatten[" + str(in_shape[1]) + "*j+i];\n\t\t\ths++;\n\t\t}\n\t}\n}\n"
                     source_Flatten_hh = "void flatten(" + self.type + " input_Flatten[" + str(in_shape[0]*
                         in_shape[1]) + "]," + self.type + " output_Flatten[" + str(out_shape) + "]);\n"
                     self.full_source_Pool_cc.append(source_Flatten_cc)
@@ -319,16 +315,10 @@ class Py2C:
                     self.full_source_CNN_cc.append(["\tflatten(", "OutFlatten", "", ""])
                 #Flatten for 3d
                 if len(self.model.layers[i - 1].input.shape) == 4:
-                    in_shape = (self.model.layers[i - 1].input.shape[3], self.model.layers[i - 1].input.shape[1],self.model.layers[i - 1].input.shape[2])
+                    in_shape = (self.model.layers[i - 1].input.shape[3], self.model.layers[i - 1].input.shape[1], self.model.layers[i - 1].input.shape[2])
                     out_shape = self.model.layers[i - 1].output.shape[1]
-                    source_Flatten_cc = "void flatten(" + self.type + " input_Flatten[" + str(in_shape[0]*
-                        in_shape[1]) + "]," + self.type + " output_Flatten[" + str(
-                        out_shape) + "]){\n\tint hs = 0;\n\tloop_for_a_flatten:\n\tfor (int i = 0; i < " + str(
-                        in_shape[1]) + "; i++){\n\t\tloop_for_c_flatten:\n\t\tfor (int j = 0; j < " + str(in_shape[
-                                                                                                              0]) + "; j++){\n\t\t\toutput_Flatten[hs] = input_Flatten[" + str(in_shape[
-                                                                                                              1]) + "*j+i];\n\t\t\ths++;\n\t\t}\n\t}\n}\n"
-                    source_Flatten_hh = "void flatten(" + self.type + " input_Flatten[" + str(in_shape[0]*
-                        in_shape[1]) + "]," + self.type + " output_Flatten[" + str(out_shape) + "]);\n"
+                    source_Flatten_cc = "void flatten(" + self.type + " input_Flatten[" + str(in_shape[0] * in_shape[1] * in_shape[2]) + "]," + self.type + " output_Flatten[" + str(out_shape) + "]){\n\tint hs = 0;\n\tfor (int i = 0; i < " + str(in_shape[1]) + "; i++){\n\t\tfor (int j = 0; j < " + str(in_shape[2]) + "; j++){\n\t\t\tfor (int k = 0; k < " + str(in_shape[0]) + "; k++){\n\t\t\t\toutput_Flatten[hs] = input_Flatten[" + str(in_shape[1]) + " * i + " + str(in_shape[2]) + " * " + str(in_shape[1]) + " * k + j ];\n\t\t\t\ths++;\n\t\t\t}\n\t\t}\n\t}\n}\n"
+                    source_Flatten_hh = "void flatten(" + self.type + " input_Flatten[" + str(in_shape[0] * in_shape[1] * in_shape[2]) + "]," + self.type + " output_Flatten[" + str(out_shape) + "]);\n"
                     self.full_source_Pool_cc.append(source_Flatten_cc)
                     self.full_source_Pool_hh.append(source_Flatten_hh)
                     self.call_function += "\t" + self.type + " OutFlatten[" + str(out_shape) + "];\n"

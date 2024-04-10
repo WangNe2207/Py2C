@@ -19,22 +19,40 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CNN.cpp" />
-    <ClCompile Include="CNN_tb.cpp" />
-    <ClCompile Include="Conv.cpp" />
-    <ClCompile Include="Dense.cpp" />
-    <ClCompile Include="Pool.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="Input.txt" />
-    <Text Include="Test_Pool.txt" />
-    <Text Include="Test_Weights.txt" />
+    <Text Include="Float_Weights.txt" />
+    <Text Include="ImageTXT_1.txt" />
+    <Text Include="ImageTXT_10.txt" />
+    <Text Include="ImageTXT_11.txt" />
+    <Text Include="ImageTXT_12.txt" />
+    <Text Include="ImageTXT_13.txt" />
+    <Text Include="ImageTXT_14.txt" />
+    <Text Include="ImageTXT_15.txt" />
+    <Text Include="ImageTXT_16.txt" />
+    <Text Include="ImageTXT_17.txt" />
+    <Text Include="ImageTXT_18.txt" />
+    <Text Include="ImageTXT_19.txt" />
+    <Text Include="ImageTXT_2.txt" />
+    <Text Include="ImageTXT_20.txt" />
+    <Text Include="ImageTXT_3.txt" />
+    <Text Include="ImageTXT_4.txt" />
+    <Text Include="ImageTXT_5.txt" />
+    <Text Include="ImageTXT_6.txt" />
+    <Text Include="ImageTXT_7.txt" />
+    <Text Include="ImageTXT_8.txt" />
+    <Text Include="ImageTXT_9.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CNN.h" />
     <ClInclude Include="Conv.h" />
     <ClInclude Include="Dense.h" />
     <ClInclude Include="Pool.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="CNN.cpp" />
+    <ClCompile Include="CNN_tb.cpp" />
+    <ClCompile Include="Conv.cpp" />
+    <ClCompile Include="Dense.cpp" />
+    <ClCompile Include="Pool.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

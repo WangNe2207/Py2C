@@ -2,13 +2,13 @@ import random
 def CreateTestTXT():
 
     #Open a file named numbersmake.txt.
-    outfile = open('Test_Pool.txt', 'w')
+    outfile = open('Test_flatten.txt', 'w')
 
     #71919 3072
     #Produce the numbers
-    for count in range(27000):
+    for count in range(13 * 6 * 6):
         #Get a random number.
-        num = count / 100
+        num = count / 10
         outfile.write(str(num))
         outfile.write(' ')
 
