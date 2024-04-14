@@ -32,14 +32,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Float_Weights.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="ImageTXT_1.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="CNN.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -52,5 +44,16 @@
     <ClInclude Include="Pool.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Float_Weights.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="ImageTXT.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="LabelTXT.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>

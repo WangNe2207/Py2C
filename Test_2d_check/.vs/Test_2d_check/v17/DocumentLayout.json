@@ -3,16 +3,12 @@
   "WorkspaceRootPath": "D:\\Ki6\\GraduationThesis\\Py2C\\Test_2d_check\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{A3D4D789-8A51-4207-B28E-341B458E5572}|Test_2d_check\\Test_2d_check.vcxproj|D:\\Ki6\\GraduationThesis\\Py2C\\Test_2d_check\\Test_2d_check\\Pool.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{A3D4D789-8A51-4207-B28E-341B458E5572}|Test_2d_check\\Test_2d_check.vcxproj|solutionrelative:Test_2d_check\\Pool.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{A3D4D789-8A51-4207-B28E-341B458E5572}|Test_2d_check\\Test_2d_check.vcxproj|D:\\Ki6\\GraduationThesis\\Py2C\\Test_2d_check\\Test_2d_check\\CNN_tb.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A3D4D789-8A51-4207-B28E-341B458E5572}|Test_2d_check\\Test_2d_check.vcxproj|solutionrelative:Test_2d_check\\CNN_tb.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A3D4D789-8A51-4207-B28E-341B458E5572}|Test_2d_check\\Test_2d_check.vcxproj|D:\\Ki6\\GraduationThesis\\Py2C\\Test_2d_check\\Test_2d_check\\CNN.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{A3D4D789-8A51-4207-B28E-341B458E5572}|Test_2d_check\\Test_2d_check.vcxproj|solutionrelative:Test_2d_check\\CNN.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A3D4D789-8A51-4207-B28E-341B458E5572}|Test_2d_check\\Test_2d_check.vcxproj|D:\\Ki6\\GraduationThesis\\Py2C\\Test_2d_check\\Test_2d_check\\CNN_tb.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{A3D4D789-8A51-4207-B28E-341B458E5572}|Test_2d_check\\Test_2d_check.vcxproj|solutionrelative:Test_2d_check\\CNN_tb.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -22,21 +18,8 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 1,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Pool.cpp",
-              "DocumentMoniker": "D:\\Ki6\\GraduationThesis\\Py2C\\Test_2d_check\\Test_2d_check\\Pool.cpp",
-              "RelativeDocumentMoniker": "Test_2d_check\\Pool.cpp",
-              "ToolTip": "D:\\Ki6\\GraduationThesis\\Py2C\\Test_2d_check\\Test_2d_check\\Pool.cpp",
-              "RelativeToolTip": "Test_2d_check\\Pool.cpp",
-              "ViewState": "AQIAACkAAAAAAAAAAAAuwDIAAAAgAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-04-10T05:19:20.227Z",
-              "EditorCaption": ""
-            },
             {
               "$type": "Document",
               "DocumentIndex": 1,
@@ -45,22 +28,21 @@
               "RelativeDocumentMoniker": "Test_2d_check\\CNN.cpp",
               "ToolTip": "D:\\Ki6\\GraduationThesis\\Py2C\\Test_2d_check\\Test_2d_check\\CNN.cpp",
               "RelativeToolTip": "Test_2d_check\\CNN.cpp",
-              "ViewState": "AQIAAAMAAAAAAAAAAAAAABQAAAAAAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAMAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-04-10T05:19:16.471Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-04-10T15:32:40.005Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 0,
               "Title": "CNN_tb.cpp",
               "DocumentMoniker": "D:\\Ki6\\GraduationThesis\\Py2C\\Test_2d_check\\Test_2d_check\\CNN_tb.cpp",
               "RelativeDocumentMoniker": "Test_2d_check\\CNN_tb.cpp",
               "ToolTip": "D:\\Ki6\\GraduationThesis\\Py2C\\Test_2d_check\\Test_2d_check\\CNN_tb.cpp",
               "RelativeToolTip": "Test_2d_check\\CNN_tb.cpp",
-              "ViewState": "AQIAAAwAAAAAAAAAAAAAABYAAAAKAAAA",
+              "ViewState": "AQIAACcAAAAAAAAAAAAAAEMAAAA5AAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-04-10T05:18:12.814Z",
+              "WhenOpened": "2024-04-10T08:01:47.5Z",
               "EditorCaption": ""
             }
           ]

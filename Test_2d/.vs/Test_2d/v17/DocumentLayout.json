@@ -5,10 +5,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{6BEE3751-546C-43E3-B176-3DDEC6EF8411}|Test_2d\\Test_2d.vcxproj|D:\\Ki6\\GraduationThesis\\Py2C\\Test_2d\\Test_2d\\CNN_tb.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{6BEE3751-546C-43E3-B176-3DDEC6EF8411}|Test_2d\\Test_2d.vcxproj|solutionrelative:Test_2d\\CNN_tb.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{6BEE3751-546C-43E3-B176-3DDEC6EF8411}|Test_2d\\Test_2d.vcxproj|D:\\Ki6\\GraduationThesis\\Py2C\\Test_2d\\Test_2d\\CNN.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{6BEE3751-546C-43E3-B176-3DDEC6EF8411}|Test_2d\\Test_2d.vcxproj|solutionrelative:Test_2d\\CNN.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -18,21 +14,8 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 0,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "CNN.cpp",
-              "DocumentMoniker": "D:\\Ki6\\GraduationThesis\\Py2C\\Test_2d\\Test_2d\\CNN.cpp",
-              "RelativeDocumentMoniker": "Test_2d\\CNN.cpp",
-              "ToolTip": "D:\\Ki6\\GraduationThesis\\Py2C\\Test_2d\\Test_2d\\CNN.cpp",
-              "RelativeToolTip": "Test_2d\\CNN.cpp",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABIAAAA9AAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-04-10T07:37:05.696Z",
-              "EditorCaption": ""
-            },
             {
               "$type": "Document",
               "DocumentIndex": 0,
@@ -41,9 +24,9 @@
               "RelativeDocumentMoniker": "Test_2d\\CNN_tb.cpp",
               "ToolTip": "D:\\Ki6\\GraduationThesis\\Py2C\\Test_2d\\Test_2d\\CNN_tb.cpp",
               "RelativeToolTip": "Test_2d\\CNN_tb.cpp",
-              "ViewState": "AQIAAAYAAAAAAAAAAAAAABcAAAANAAAA",
+              "ViewState": "AQIAAAYAAAAAAAAAAAAAABoAAABSAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-04-10T07:35:37.705Z",
+              "WhenOpened": "2024-04-13T03:22:22.154Z",
               "EditorCaption": ""
             }
           ]

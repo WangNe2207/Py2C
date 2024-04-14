@@ -9,7 +9,7 @@ void Max_Pool2D_0(float input_MaxPooling[27000], float output_MaxPooling[6750]){
 				float max_c = 0.0;
 				for (int h = 0; h < PoolSize; h++){
 					for (int w = 0; w < PoolSize; w++){
-						int Pool_index = 30 * 30 * i + 30 *  h + 30 * stride * z + w + y * stride;
+						int Pool_index = 30 * 30 * i + 30 * h + 30 * stride * z + w + y * stride;
 						float Pool_value = input_MaxPooling[Pool_index];
 						if (Pool_value >= max_c) max_c = Pool_value;
 					}
@@ -32,7 +32,7 @@ void Max_Pool2D_1(float input_MaxPooling[2197], float output_MaxPooling[468]){
 				float max_c = 0.0;
 				for (int h = 0; h < PoolSize; h++){
 					for (int w = 0; w < PoolSize; w++){
-						int Pool_index = 13 * 13 * i + 13 *  h + 13 * stride * z + w + y * stride;
+						int Pool_index = 13 * 13 * i + 13 * h + 13 * stride * z + w + y * stride;
 						float Pool_value = input_MaxPooling[Pool_index];
 						if (Pool_value >= max_c) max_c = Pool_value;
 					}

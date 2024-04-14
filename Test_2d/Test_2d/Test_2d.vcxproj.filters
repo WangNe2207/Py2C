@@ -10,88 +10,8 @@
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
     <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+      <UniqueIdentifier>{22036bc1-d0aa-4287-b8c2-ea1c306c4d47}</UniqueIdentifier>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="Float_Weights.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="ImageTXT_1.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="ImageTXT_2.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="ImageTXT_3.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="ImageTXT_4.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="ImageTXT_5.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="ImageTXT_6.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="ImageTXT_7.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="ImageTXT_8.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="ImageTXT_9.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="ImageTXT_10.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="ImageTXT_11.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="ImageTXT_12.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="ImageTXT_13.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="ImageTXT_14.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="ImageTXT_15.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="ImageTXT_16.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="ImageTXT_17.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="ImageTXT_18.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="ImageTXT_19.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="ImageTXT_20.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="CNN.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Conv.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Dense.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Pool.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CNN.cpp">
@@ -109,5 +29,36 @@
     <ClCompile Include="Pool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Float_Weights.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="ImageTXT.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="ImageTXT_test.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="LabelTXT.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="LabelTXT_test.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CNN.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Conv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Dense.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Pool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

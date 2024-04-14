@@ -26,14 +26,15 @@
     <ClCompile Include="Pool.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Float_Weights.txt" />
-    <Text Include="ImageTXT_1.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="CNN.h" />
     <ClInclude Include="Conv.h" />
     <ClInclude Include="Dense.h" />
     <ClInclude Include="Pool.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Float_Weights.txt" />
+    <Text Include="ImageTXT.txt" />
+    <Text Include="LabelTXT.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

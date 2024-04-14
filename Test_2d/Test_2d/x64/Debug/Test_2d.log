@@ -1,2 +1,3 @@
 ﻿  CNN_tb.cpp
+D:\Ki6\GraduationThesis\Py2C\Test_2d\Test_2d\CNN_tb.cpp(59,18): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
   Test_2d.vcxproj -> D:\Ki6\GraduationThesis\Py2C\Test_2d\x64\Debug\Test_2d.exe
