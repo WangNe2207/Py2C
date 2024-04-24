@@ -1,7 +1,6 @@
 from Py2C import Py2C
 # path_w= ["Conv.cc", "Conv.hh", "Pool.cc", "Pool.hh", "Dense.cc", "CNN.hh"]
-pyc_lib = Py2C("Lenet5_Cifar10.h5")
-# pyc_lib = Py2C("mymodel.h5")
+pyc_lib = Py2C("Lenet5_Cifar10_withBatch_padding.h5")
 pyc_lib.convert2C()
 pyc_lib.WriteCfile()
 # pyc_lib.del_one_file("CNN.hh")
