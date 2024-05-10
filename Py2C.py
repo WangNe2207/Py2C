@@ -28,7 +28,7 @@ class Py2C:
         - Write_FixedPoint_Weights_File function is to create Fixed Point Weights file
     """
 
-    def __init__(self, model_path, type="float", fxp_para=(16, 6), choose_only_output=True, resnet=False, num_layers_in_block=4,num_layers_before_block=3, num_blocks=4):
+    def __init__(self, model_path, type="float", fxp_para=(20,10), choose_only_output=True, resnet=True, num_layers_in_block=4,num_layers_before_block=3, num_blocks=1):
         self.model = tf.keras.models.load_model(model_path)
         assert fxp_para[0] > 0 and fxp_para[1] > 0, "the 1st or the 2nd Fxp Parameter must be more than zero!!!"
         assert fxp_para[0] >= fxp_para[1], "the 1st Fxp Parameter must be equal or more than the 2nd one!!!"
@@ -45,7 +45,7 @@ class Py2C:
         self.base_include = ""
         self.fxp_include = "#include <ap_axi_sdata.h>\ntypedef ap_fixed<" + str(fxp_para[0]) + "," + str(
             fxp_para[1]) + "> fxp;\n"
-        self.CNN_include = "#include \"Conv.h\"\n#include \"Pool.h\"\n#include \"Dense.h\"\n#include <algorithm>\n"
+        self.CNN_include = "#include \"Conv.h\"\n#include \"Pool.h\"\n#include \"Dense.h\"\n#include <algorithm>\n#include <string.h>\n"
         self.source_Conv_cc = ""
 
         self.act_arr = ""
@@ -59,6 +59,9 @@ class Py2C:
         self.full_source_Dense_hh = []
         self.full_source_CNN_cc = []
         self.Weights = []
+        self.source_CNN = ""
+        self.source_CNN_hh = ""
+        self.source_CNN_tb = ""
         self.index = 0
         self.index2D = 0
         self.indexBatch = 0
@@ -66,9 +69,9 @@ class Py2C:
         self.index_P = 0
         self.index_P2D = 0
         self.index_D = 0
-        self.index_basic_block= 0
-        self.num_layers_in_block= num_layers_in_block
-        self.num_layers_before_block=num_layers_before_block
+        self.index_basic_block = 0
+        self.num_layers_in_block = num_layers_in_block
+        self.num_layers_before_block = num_layers_before_block
         self.num_blocks = num_blocks
         self.cnt_param = 0
         self.call_function = ""
@@ -91,21 +94,34 @@ class Py2C:
                 layer = self.config["layers"][i]['config']['name']
                 if self.resnet:
                     if ((i == self.num_layers_before_block + 1) and (self.index_basic_block < self.num_blocks)) or ((i == self.num_layers_before_block + 1 + self.num_layers_in_block * self.index_basic_block) and (self.index_basic_block < self.num_blocks)):
-                        out_shape = (self.model.layers[i - 1].output.shape[3], self.model.layers[i - 1].output.shape[1],
-                                     self.model.layers[i - 1].output.shape[2])
-                        self.call_function += "\t" + self.type + " skip_" + str(self.index_basic_block) + "[" + str(
-                            out_shape[0] * out_shape[1] * out_shape[2]) + "];\n"
+                        if (len(self.model.layers[i - 1].output.shape) == 4):
+                            out_shape = (self.model.layers[i - 1].output.shape[3], self.model.layers[i - 1].output.shape[1],
+                                         self.model.layers[i - 1].output.shape[2])
+                            self.call_function += "\t" + self.type + " skip_" + str(self.index_basic_block) + "[" + str(
+                                out_shape[0] * out_shape[1] * out_shape[2]) + "];\n"
+                        else:
+                            out_shape = (self.model.layers[i - 1].output.shape[1],self.model.layers[i - 1].output.shape[2])
+                            self.call_function += "\t" + self.type + " skip_" + str(self.index_basic_block) + "[" + str(
+                                out_shape[0] * out_shape[1]) + "];\n"
                         self.full_source_CNN_cc.append(
-                            ["\tstd::copy(std::begin(", "), std::end(" , "), std::begin(skip_" + str(self.index_basic_block)])
+                            ["\tmemcpy(skip_" + str(self.index_basic_block), "sizeof(", "));"])
                         self.index_basic_block += 1
 
                     if layer.find("add") >= 0 :
-                        out_shape = (self.model.layers[i - 1].output.shape[3], self.model.layers[i - 1].output.shape[1],
-                                     self.model.layers[i - 1].output.shape[2])
-                        self.call_function += "\t" + self.type + " end_basicblock_" + str(self.index_basic_block - 1) + "[" + str(
-                            out_shape[0] * out_shape[1] * out_shape[2]) + "];\n"
-                        self.full_source_CNN_cc.append(
-                            ["\tstd::", "transform(", " + ", str(out_shape[0] * out_shape[1] * out_shape[2]) , "skip_" + str(self.index_basic_block - 1), "end_basicblock_" + str(self.index_basic_block - 1),"std::plus<float>());"])
+                        if (len(self.model.layers[i - 1].output.shape) == 4):
+                            out_shape = (self.model.layers[i - 1].output.shape[3], self.model.layers[i - 1].output.shape[1],
+                                         self.model.layers[i - 1].output.shape[2])
+                            self.call_function += "\t" + self.type + " end_basicblock_" + str(self.index_basic_block - 1) + "[" + str(
+                                out_shape[0] * out_shape[1] * out_shape[2]) + "];\n"
+                            self.full_source_CNN_cc.append(
+                                ["\taddArray(", "skip_" ,str(self.index_basic_block - 1) ,"end_basicblock_" , str(self.index_basic_block - 1), str(out_shape[0] * out_shape[1] * out_shape[2]),");"])
+                        else:
+                            out_shape = (self.model.layers[i - 1].output.shape[1],
+                                         self.model.layers[i - 1].output.shape[2])
+                            self.call_function += "\t" + self.type + " end_basicblock_" + str(self.index_basic_block - 1) + "[" + str(
+                                out_shape[0] * out_shape[1]) + "];\n"
+                            self.full_source_CNN_cc.append(
+                                ["\taddArray(", "skip_" ,str(self.index_basic_block - 1) ,"end_basicblock_" , str(self.index_basic_block - 1), str(out_shape[0] * out_shape[1]),");"])
                 # convert conv2d layer into c array that act like an conv2d layer
                 if layer.find("conv2d") >= 0 and layer.find("conv2d_input") < 0:
                     activation = self.config["layers"][i]['config']['activation']
@@ -136,7 +152,7 @@ class Py2C:
                         padding = (out_shape[1] - (in_shape[1] - kernel_shape[2] + 1),
                                    out_shape[2] - (in_shape[2] - kernel_shape[3] + 1))
                         in_shape_if_padding = (in_shape[0], (in_shape[1] + padding[0]), (in_shape[2] + padding[1]))
-                        source_pad_conv_cc = "void Padding_Conv2D_" + str(
+                        source_pad_conv_cc = self.fxp_inc + "void Padding_Conv2D_" + str(
                             self.index2D) + "(" + self.type + " input_Pad_Conv[" + str(
                             in_shape[0] * in_shape[1] * in_shape[2]) + "], " + self.type + " output_Pad_Conv[" + str(
                             in_shape_if_padding[0] * in_shape_if_padding[1] * in_shape_if_padding[
@@ -160,7 +176,7 @@ class Py2C:
                             in_shape[2]) + " * c + " + str(in_shape[2]) + " * (n - " + str(
                             int(padding[1] / 2)) + ") + i - " + str(
                             int(padding[1] / 2)) + "];\n\t\t\t}\n\t\t}\n\t}\n}\n"
-                        source_pad_conv_hh = "void Padding_Conv2D_" + str(
+                        source_pad_conv_hh = self.fxp_inc + "void Padding_Conv2D_" + str(
                             self.index2D) + "(" + self.type + " input_Pad_Conv[" + str(
                             in_shape[0] * in_shape[1] * in_shape[2]) + "], " + self.type + " output_Pad_Conv[" + str(
                             in_shape[0] * (in_shape[1] + padding[0]) * (in_shape[2] + padding[1])) + "]);\n"
@@ -282,7 +298,6 @@ class Py2C:
                     self.call_function += "\t" + self.type + " OutConv" + str(self.index) + "[" + str(
                         out_shape[0] *
                         out_shape[1]) + "];\n"
-                    # base_inc = base_include
                     source_Conv_cc = self.fxp_inc + "void Conv1D_" + str(
                         self.index) + "(" + self.type + " Input_Conv[" + str(
                         in_shape[0] * in_shape[1]) + "]," + self.type + " Output_Conv[" + str(
@@ -342,7 +357,15 @@ class Py2C:
 
                         self.call_function += "\t" + str(self.type) + " OutBatchNorm2D_" + str(
                             self.indexBatch) + "[" + str(in_shape[0] * in_shape[1] * in_shape[2]) + "];\n"
-                        source_Conv_cc = "#include <cmath>\n" + self.fxp_inc + " void BatchNorm2D_" + str(
+                        type_sqrt = ""
+                        if self.type == "fxp":
+                            source_Conv_cc = "#include <hls_math.h>\n"
+                            type_sqrt = "hls::sqrt"
+                        else:
+                            source_Conv_cc = "#include <cmath>\n"
+                            type_sqrt = "sqrt"
+
+                        source_Conv_cc += self.fxp_inc + " void BatchNorm2D_" + str(
                             self.indexBatch) + "(" + str(self.type) + " Input_BatchNorm[" + str(
                             in_shape[0] * in_shape[1] * in_shape[2]) + "], " + str(
                             self.type) + " Output_BatchNorm[" + str(
@@ -355,8 +378,8 @@ class Py2C:
                             in_shape[0]) + "; i++){\n\t\tfor(int j = 0; j < " + str(
                             in_shape[1] * in_shape[2]) + "; j++){" + "\n\t\t\t Output_BatchNorm[" + str(
                             in_shape[1] * in_shape[2]) + " * i + j] = ((Input_BatchNorm[" + str(in_shape[1] * in_shape[
-                            2]) + " * i + j] - MovMean[i]) / (sqrt(MovVar[i] + eps))) * gamma[i] + beta[i];\n\t\t}\n\t}\n}\n"
-                        source_Conv_hh = self.fxp_inc + "void BatchNorm2D_" + str(self.indexBatch) + "(" + str(
+                            2]) + " * i + j] - MovMean[i]) / (" + type_sqrt + "(MovVar[i] + eps))) * gamma[i] + beta[i];\n\t\t}\n\t}\n}\n"
+                        source_Conv_hh = "void BatchNorm2D_" + str(self.indexBatch) + "(" + str(
                             self.type) + " Input_BatchNorm[" + str(
                             in_shape[0] * in_shape[1] * in_shape[2]) + "], " + str(
                             self.type) + " Output_BatchNorm[" + str(
@@ -377,9 +400,12 @@ class Py2C:
                     else:
                         in_shape = self.model.layers[i].input.shape[1]
                         out_shape = self.model.layers[i].output.shape[1]
-                        beta = self.model.layers[i].get_weights()[0]
-                        moving_mean = self.model.layers[i].get_weights()[1]
-                        moving_variance = self.model.layers[i].get_weights()[2]
+                        gamma = self.model.layers[i].get_weights()[0]
+                        beta = self.model.layers[i].get_weights()[1]
+                        moving_mean = self.model.layers[i].get_weights()[2]
+                        moving_variance = self.model.layers[i].get_weights()[3]
+                        for k in gamma:
+                            self.Weights.append(k)
                         for k in beta:
                             self.Weights.append(k)
                         for k in moving_mean:
@@ -388,29 +414,27 @@ class Py2C:
                             self.Weights.append(k)
                         self.call_function += "\t" + str(self.type) + " OutBatchNorm2D_" + str(
                             self.indexBatch) + "[" + str(in_shape) + "];\n"
-                        source_Conv_cc = "#include <cmath>\n" + self.fxp_inc + " void BatchNorm2D_" + str(
-                            self.indexBatch) + "(" + str(self.type) + " Input_BatchNorm[" + str(in_shape) + "], " + str(
-                            self.type) + " Output_BatchNorm[" + str(out_shape) + "], " + str(
-                            self.type) + " beta[" + str(len(beta)) + "], " + str(self.type) + " MovMean[" + str(
-                            len(moving_mean)) + "], " + str(self.type) + " MovVar[" + str(
-                            len(moving_variance)) + "]) {" + "\n\t" + self.type + " eps = " + str(
-                            self.model.layers[i].epsilon) + ";\n\t for(int i = 0; i < " + str(
-                            in_shape) + "; i++){\n\t\tOutput_BatchNorm[i] = ((Input_BatchNorm[i] - MovMean[i]) / (sqrt(MovVar[i] + eps))) + beta[i];\n\t}\n}\n"
-                        source_Conv_hh = self.fxp_inc + "void BatchNorm2D_" + str(self.indexBatch) + "(" + str(
-                            self.type) + " Input_BatchNorm[" + str(in_shape) + "], " + str(
-                            self.type) + " Output_BatchNorm[" + str(out_shape) + "], " + str(
-                            self.type) + " beta[" + str(len(beta)) + "], " + str(self.type) + " MovMean[" + str(
-                            len(moving_mean)) + "], " + str(self.type) + " MovVar[" + str(
-                            len(moving_variance)) + "]);\n"
+
+                        type_sqrt = ""
+                        if self.type == "fxp":
+                            source_Conv_cc = "#include <hls_math.h>\n"
+                            type_sqrt = "hls::sqrt"
+                        else:
+                            source_Conv_cc = "#include <cmath>\n"
+                            type_sqrt = "sqrt"
+
+                        source_Conv_cc += self.fxp_inc + " void BatchNorm2D_" + str(self.indexBatch) + "(" + str(self.type) + " Input_BatchNorm[" + str(in_shape) + "], " + str(self.type) + " Output_BatchNorm[" + str(out_shape) + "], " + str(self.type) + " gamma[" + str(len(gamma)) + "]," + str(self.type) + " beta[" + str(len(beta)) + "], " + str(self.type) + " MovMean[" + str(len(moving_mean)) + "], " + str(self.type) + " MovVar[" + str(len(moving_variance)) + "]) {" + "\n\t" + self.type + " eps = " + str(self.model.layers[i].epsilon) + ";\n\t for(int i = 0; i < " + str(in_shape) + "; i++){\n\t\tOutput_BatchNorm[i] = ((Input_BatchNorm[i] - MovMean[i]) / (" + type_sqrt + "(MovVar[i] + eps)))* gamma[i] + beta[i];\n\t}\n}\n"
+                        source_Conv_hh = "void BatchNorm2D_" + str(self.indexBatch) + "(" + str(self.type) + " Input_BatchNorm[" + str(in_shape) + "], " + str(self.type) + " Output_BatchNorm[" + str(out_shape) + "], " + str(self.type) + " gamma[" + str(len(gamma)) + "], " + str(self.type) + " beta[" + str(len(beta)) + "], " + str(self.type) + " MovMean[" + str(len(moving_mean)) + "], " + str(self.type) + " MovVar[" + str(len(moving_variance)) + "]);\n"
                         self.full_source_CNN_cc.append(
                             ["\tBatchNorm2D_" + str(self.indexBatch) + "(", "OutBatchNorm2D_" + str(self.indexBatch),
                              "&Weights[" + str(self.cnt_param) + "]",
-                             "&Weights[" + str(self.cnt_param + len(beta)) + "]",
-                             "&Weights[" + str(self.cnt_param + len(beta) + len(moving_mean)) + "]"])
+                             "&Weights[" + str(self.cnt_param + len(gamma)) + "]",
+                             "&Weights[" + str(self.cnt_param + len(gamma) + len(beta)) + "]",
+                             "&Weights[" + str(self.cnt_param + len(gamma) + len(beta) + len(moving_mean)) + "]"])
                         self.full_source_Conv_cc.append(source_Conv_cc)
                         self.full_source_Conv_hh.append(source_Conv_hh)
                         self.indexBatch += 1
-                        self.cnt_param += len(beta) + len(moving_mean) + len(moving_variance)
+                        self.cnt_param += len(gamma) + len(beta) + len(moving_mean) + len(moving_variance)
 
                 if layer.find("activation") >= 0:
                     if len(self.model.layers[i].input.shape) <= 2:
@@ -520,22 +544,7 @@ class Py2C:
                     else:
                         self.fxp_inc = ""
 
-                    source_Pool_cc = self.fxp_inc + "void Max_Pool1D_" + str(
-                        self.index_P) + "(" + self.type + " input_MaxPooling[" + str(
-                        in_shape[0] * (in_shape[1] + 2)) + "], " + self.type + " output_MaxPooling[" + str(
-                        out_shape[0] * out_shape[
-                            1]) + "]){\n\t" + self.type + " pool = 0.0;\n\t" + self.type + " value=0.0;\n\tint s;\n\tloop_for_channel_pool_" + str(
-                        self.index_P) + ":\n\tfor (int z = 0; z < " + str(
-                        out_shape[0]) + "; z++){\n\t\tloop_for_weight_pool_" + str(
-                        self.index_P) + ":\n\t\tfor (int y = 0; y < " + str(out_shape[
-                                                                                1]) + "; y++){\n\t\t\ts=y+y;\n\t\t\tpool = input_MaxPooling[" + str(
-                        in_shape[
-                            1] + 2) + "*z+s];\n\t\t\tvalue = input_MaxPooling[" + str(in_shape[
-                                                                                          1] + 2) + "*z+s+1];\n\t\t\tif (value > pool)\n\t\t\t\tpool=value;\n\t\t\tvalue = input_MaxPooling[" + str(
-                        in_shape[
-                            1] + 2) + "*z+s+2];\n\t\t\tif (value > pool) pool=value;\n\t\t\toutput_MaxPooling[" + str(
-                        out_shape[
-                            1]) + "*z+y]=pool;\n\t\t}\n\t}\n}\n"
+                    source_Pool_cc = self.fxp_inc + "void Max_Pool1D_" + str(self.index_P) + "(" + self.type + " input_MaxPooling[" + str(in_shape[0] * (in_shape[1] + 2)) + "], " + self.type + " output_MaxPooling[" + str(out_shape[0] * out_shape[1]) + "]){\n\t" + self.type + " pool = 0.0;\n\t" + self.type + " value=0.0;\n\tint s;\n\tloop_for_channel_pool_" + str(self.index_P) + ":\n\tfor (int z = 0; z < " + str(out_shape[0]) + "; z++){\n\t\tloop_for_weight_pool_" + str(self.index_P) + ":\n\t\tfor (int y = 0; y < " + str(out_shape[1]) + "; y++){\n\t\t\ts=y+y;\n\t\t\tpool = input_MaxPooling[" + str(in_shape[1]) + "*z+s];\n\t\t\tvalue = input_MaxPooling[" + str(in_shape[1]) + "*z+s+1];\n\t\t\tif (value > pool)\n\t\t\t\tpool=value;\n\t\t\toutput_MaxPooling[" + str(out_shape[1]) + "*z+y]=pool;\n\t\t}\n\t}\n}\n"
                     source_Pool_hh = self.fxp_inc + "void Max_Pool1D_" + str(
                         self.index_P) + "(" + self.type + " input_MaxPooling[" + str(
                         in_shape[0] * (in_shape[1] + 2)) + "], " + self.type + " output_MaxPooling[" + str(
@@ -543,35 +552,35 @@ class Py2C:
                     self.full_source_Pool_cc.append(source_Pool_cc)
                     self.full_source_Pool_hh.append(source_Pool_hh)
 
-                    if self.config["layers"][i]['config']['padding'] == 'same':
-                        self.call_function += "\t" + self.type + " OutPadPool" + str(self.index_P) + "[" + str(
-                            in_shape[0] * (
-                                    in_shape[1] + 2)) + "];\n"
-                        self.full_source_CNN_cc.append(
-                            ["\tPadding_Pool1D_" + str(self.index_P) + "(", "OutPadPool" + str(self.index_P), "", ""])
-                    self.call_function += "\t" + self.type + " OutPool" + str(self.index_P) + "[" + str(
-                        out_shape[0] *
-                        out_shape[1]) + "];\n"
-                    self.full_source_CNN_cc.append(
-                        ["\tMax_Pool1D_" + str(self.index_P) + "(", "OutPool" + str(self.index_P), "", ""])
-                    if self.config["layers"][i]['config']['padding'] == 'same':
-                        source_pad_pool_cc = "void Padding_Pool1D_" + str(
-                            self.index_P) + "(" + self.type + " input_Pad_Pool[" + str(
-                            in_shape[0] * in_shape[1]) + "], " + self.type + " output_Pad_Pool[" + str(
-                            in_shape[0] * (in_shape[1] + 2)) + "]){\n\tloop_for_channel_pad_" + str(
-                            self.index_P) + ":\n\tfor (int n = 0; n < " + str(
-                            in_shape[0]) + "; n++){\n\t\tloop_for_weight_pad_" + str(
-                            self.index_P) + ":\n\t\tfor (int i = 0; i < " + str(
-                            in_shape[1] + 2) + "; i++){\n\t\t\tif (i < 1 || i >= " + str(in_shape[
-                                                                                             1] + 2 - 1) + ") output_Pad_Pool[" + str(
-                            in_shape[1] + 2) + "*n+i]=0; else output_Pad_Pool[" + str(
-                            in_shape[1] + 2) + "*n+i]=input_Pad_Pool[" + str(in_shape[1]) + "*n+i-1];\n\t\t}\n\t}\n}\n"
-                        source_pad_pool_hh = "void Padding_Pool1D_" + str(
-                            self.index_P) + "(" + self.type + " input_Pad_Pool[" + str(
-                            in_shape[0] * in_shape[1]) + "], " + self.type + " output_Pad_Pool[" + str(
-                            in_shape[0] * (in_shape[1] + 2)) + "]);\n"
-                        self.full_source_Pool_cc.append(source_pad_pool_cc)
-                        self.full_source_Pool_hh.append(source_pad_pool_hh)
+                    # if self.config["layers"][i]['config']['padding'] == 'same':
+                    #     self.call_function += "\t" + self.type + " OutPadPool" + str(self.index_P) + "[" + str(
+                    #         in_shape[0] * (
+                    #                 in_shape[1] + 2)) + "];\n"
+                    #     self.full_source_CNN_cc.append(
+                    #         ["\tPadding_Pool1D_" + str(self.index_P) + "(", "OutPadPool" + str(self.index_P), "", ""])
+                    # self.call_function += "\t" + self.type + " OutPool" + str(self.index_P) + "[" + str(
+                    #     out_shape[0] *
+                    #     out_shape[1]) + "];\n"
+                    # self.full_source_CNN_cc.append(
+                    #     ["\tMax_Pool1D_" + str(self.index_P) + "(", "OutPool" + str(self.index_P), "", ""])
+                    # if self.config["layers"][i]['config']['padding'] == 'same':
+                    #     source_pad_pool_cc = "void Padding_Pool1D_" + str(
+                    #         self.index_P) + "(" + self.type + " input_Pad_Pool[" + str(
+                    #         in_shape[0] * in_shape[1]) + "], " + self.type + " output_Pad_Pool[" + str(
+                    #         in_shape[0] * (in_shape[1] + 2)) + "]){\n\tloop_for_channel_pad_" + str(
+                    #         self.index_P) + ":\n\tfor (int n = 0; n < " + str(
+                    #         in_shape[0]) + "; n++){\n\t\tloop_for_weight_pad_" + str(
+                    #         self.index_P) + ":\n\t\tfor (int i = 0; i < " + str(
+                    #         in_shape[1] + 2) + "; i++){\n\t\t\tif (i < 1 || i >= " + str(in_shape[
+                    #                                                                          1] + 2 - 1) + ") output_Pad_Pool[" + str(
+                    #         in_shape[1] + 2) + "*n+i]=0; else output_Pad_Pool[" + str(
+                    #         in_shape[1] + 2) + "*n+i]=input_Pad_Pool[" + str(in_shape[1]) + "*n+i-1];\n\t\t}\n\t}\n}\n"
+                    #     source_pad_pool_hh = "void Padding_Pool1D_" + str(
+                    #         self.index_P) + "(" + self.type + " input_Pad_Pool[" + str(
+                    #         in_shape[0] * in_shape[1]) + "], " + self.type + " output_Pad_Pool[" + str(
+                    #         in_shape[0] * (in_shape[1] + 2)) + "]);\n"
+                    #     self.full_source_Pool_cc.append(source_pad_pool_cc)
+                    #     self.full_source_Pool_hh.append(source_pad_pool_hh)
                     self.index_P += 1
 
                 # convert flatten layer into c array that act like an flatten layer
@@ -736,42 +745,35 @@ class Py2C:
                                                       self.full_source_CNN_cc[i][3] + ");\n"
                             if self.resnet :
                                 if (len(self.full_source_CNN_cc[i]) == 3):
-                                    self.call_function += self.full_source_CNN_cc[i][0] + self.full_source_CNN_cc[i - 1][1] + self.full_source_CNN_cc[i][1] + self.full_source_CNN_cc[i - 1][1] + self.full_source_CNN_cc[i][2] + "));\n"
+                                    self.call_function += self.full_source_CNN_cc[i][0] + ", " + self.full_source_CNN_cc[i - 1][1] + ", " + self.full_source_CNN_cc[i][1] + self.full_source_CNN_cc[i - 1][1] + self.full_source_CNN_cc[i][2] + "\n"
                                     self.full_source_CNN_cc[i][1] = self.full_source_CNN_cc[i - 1][1]
                                 if (len(self.full_source_CNN_cc[i]) == 7):
-                                    self.call_function += self.full_source_CNN_cc[i][0] + self.full_source_CNN_cc[i][1] + self.full_source_CNN_cc[i - 1][1]  + ", " + self.full_source_CNN_cc[i - 1][1] + self.full_source_CNN_cc[i][2] + self.full_source_CNN_cc[i][3] + ", " + self.full_source_CNN_cc[i][4] + ", " + self.full_source_CNN_cc[i][5] + ", " + self.full_source_CNN_cc[i][6] + "\n"
-                                    self.full_source_CNN_cc[i][1] = self.full_source_CNN_cc[i][5]
+                                    self.call_function += self.full_source_CNN_cc[i][0] + self.full_source_CNN_cc[i - 1][1]  + ", " + self.full_source_CNN_cc[i][1] + self.full_source_CNN_cc[i][2] + ", " + self.full_source_CNN_cc[i][3] + self.full_source_CNN_cc[i][4] + ", " + self.full_source_CNN_cc[i][5] + self.full_source_CNN_cc[i][6] + "\n"
+                                    self.full_source_CNN_cc[i][1] = self.full_source_CNN_cc[i][3] + self.full_source_CNN_cc[i][4]
 
                     else:
                         self.call_function += self.full_source_CNN_cc[i][0] + self.full_source_CNN_cc[i - 1][1] + "," + \
                                               self.full_source_CNN_cc[i][1] + ");\n"
-            self.source_CNN = "void CNN(" + self.type + " InModel[" + str(self.model.layers[1].input.shape[2] *
-                                                                          self.model.layers[1].input.shape[1] *
-                                                                          self.model.layers[1].input.shape[
-                                                                              3]) + "]," + self.type + self.out + "," + self.type + " Weights[" + str(
-                self.cnt_param) + "]){\n" + self.call_function + "}\n"
+            if self.resnet:
+                self.source_CNN = "void addArray(" + self.type + "* array1, " + self.type + "* array2, " + self.type + "* result, int size) {\n\tfor (int i = 0; i < size; i++){\n\t\tresult[i] = array1[i] + array2[i];\n\t}\n}\n"
 
-            self.source_CNN_hh = "void CNN(" + self.type + " InModel[" + str(
-                self.model.layers[1].input.shape[2] *
-                self.model.layers[1].input.shape[1] * self.model.layers[1].input.shape[
-                    3]) + "]," + self.type + self.out + "," + self.type + " Weights[" + str(
-                self.cnt_param) + "]);\n"
+            if len(self.model.layers[1].input.shape) == 4:
+                self.source_CNN += "void CNN(" + self.type + " InModel[" + str(self.model.layers[1].input.shape[2] * self.model.layers[1].input.shape[1] *self.model.layers[1].input.shape[3]) + "]," + self.type + self.out + "," + self.type + " Weights[" + str(self.cnt_param) + "]){\n" + self.call_function + "}\n"
+                self.source_CNN_hh = "void CNN(" + self.type + " InModel[" + str(
+                    self.model.layers[1].input.shape[2] *
+                    self.model.layers[1].input.shape[1] * self.model.layers[1].input.shape[
+                        3]) + "]," + self.type + self.out + "," + self.type + " Weights[" + str(
+                    self.cnt_param) + "]);\n"
+            if len(self.model.layers[1].input.shape) == 3:
+                self.source_CNN = "void CNN(" + self.type + " InModel[" + str(self.model.layers[1].input_shape[2] * self.model.layers[1].input_shape[1]) + "]," + self.type + self.out + "," + self.type + " Weights[" + str(self.cnt_param) + "]){\n" + self.call_function + "}\n"
+                self.source_CNN_hh = "void CNN(" + self.type + " InModel[" + str(
+                    self.model.layers[1].input.shape[2] *
+                    self.model.layers[1].input.shape[1]) + "]," + self.type + self.out + "," + self.type + " Weights[" + str(
+                    self.cnt_param) + "]);\n"
 
-            self.source_CNN_tb = "#include <conio.h>\n#include <stdio.h>\n#include <stdlib.h>\n#include <math.h>\n#include <string>\n#include <fstream>\n#include <iostream>\n#include \"CNN.h\"\n#include \"Conv.h\"\n#include \"Pool.h\"\n#include \"Dense.h\"\n#define NumberOfPicture " + "...\n#define d " + "...\n" + self.fxp_inc + "int main(){\n\t" + self.type + " " + \
-                                 self.out.split("&")[
-                                     -1] + ";\n\t" + self.type + "* Weights = (" + self.type + "*)malloc(" + str(
-                self.cnt_param) + " * sizeof(" + self.type + "));\n\tfloat tmp;\n\tFILE* Weight;\n\terrno_t fp = fopen_s(&Weight,\"Weights.txt\", \"r\");\n\tfor (int i = 0; i < " + str(
-                self.cnt_param) + "; i++){\n\t\tfscanf_s(Weight, \"%f\", &tmp);\n\t\t*(Weights + i)=tmp;\n\t}\n\tfclose(Weight);" + "\n\t////read Input" + "\n\t//FILE* Input;\n\t//" + self.type + "* InModel = (" + self.type + "*)malloc((NumberOfPicture * d * " + str(
-                self.model.layers[1].input.shape[2]) + " * " + str(self.model.layers[1].input.shape[
-                                                                       1]) + ") * sizeof(" + self.type + "));\n\t//fp = fopen_s(&Input,\"Input.txt\", \"r\");\n\t//for (int i = 0; i < " + "NumberOfPicture * d * " + str(
-                self.model.layers[1].input.shape[2]) + " * " + str(self.model.layers[1].input.shape[
-                                                                       1]) + "; i++){\n\t\t//fscanf_s(Input, \"%f\", &tmp);\n\t\t//*(InModel + i)=tmp;\n\t//}\n\t//fclose(Input);" + "\n\t////Read Label" + "\n\t//FILE* Output;" + "\n\t//" + self.type + "*Label = (" + self.type + "*)malloc((NumberOfPicture) * sizeof(" + self.type + "));" + "\n\t//fp = fopen_s(&Output, \"LabelTXT.txt\", \"r\");\n\t//for (int i = 0; i < NumberOfPicture ; i++)\n\t//{\n\t\t//fscanf_s(Output, \"%f\", &tmp);\n\t\t//*(Label + i) = tmp;\n\t//}\n\t//fclose(Output);\n\t//" + self.type + " OutArray[NumberOfPicture] = {};\n\t//" + self.type + " Image[d * " + str(
-                self.model.layers[1].input.shape[1]) + " * " + str(self.model.layers[1].input.shape[
-                                                                       2]) + "] = {};\n\t//for (int i = 0; i < NumberOfPicture ; i++)\n\t//{\n\t\t//int startIndex = i * d * " + str(
-                self.model.layers[1].input.shape[1]) + " * " + str(
-                self.model.layers[1].input.shape[2]) + ";\n\t\t//for (int k = 0; k < d * " + str(
-                self.model.layers[1].input.shape[1]) + " * " + str(self.model.layers[1].input.shape[
-                                                                       2]) + "; k++)\n\t\t//{\n\t\t\t//Image[k] = *(InModel + startIndex + k);\n\t\t//}\n\t\t//CNN(Image, OutModel, Weights);\n\t\t//OutArray[i] = OutModel;\n\t//}\n\t//float countTrue = 0;\n\t//for (int i = 0; i < NumberOfPicture; i++)\n\t//{\n\t\t//int labelValue = *(Label + i);\n\t\t//if (labelValue == OutArray[i])\n\t\t//{\n\t\t\t//countTrue = countTrue + 1;\n\t\t//}\n\t//}\n\t//float accuracy = (float)((countTrue / NumberOfPicture) * 100);\n\t//std::cout << \"accuracy of Model: \" << accuracy << \"%\\n\";" + "\n\treturn 0;\n}\n"
+
+
+            self.source_CNN_tb = "#include <conio.h>\n#include <stdio.h>\n#include <stdlib.h>\n#include <math.h>\n#include <string>\n#include <fstream>\n#include <iostream>\n#include \"CNN.h\"\n#include \"Conv.h\"\n#include \"Pool.h\"\n#include \"Dense.h\"\n#define NumberOfPicture " + "...\n#define d " + "...\n" + self.fxp_inc + "int main(){\n\t" + self.type + " " + self.out.split("&")[-1] + ";\n\t" + self.type + "* Weights = (" + self.type + "*)malloc(" + str(self.cnt_param) + " * sizeof(" + self.type + "));\n\tfloat tmp;\n\tFILE* Weight = fopen(\"Weights.txt\", \"r\");\n\tfor (int i = 0; i < " + str(self.cnt_param) + "; i++){\n\t\tfscanf(Weight, \"%f\", &tmp);\n\t\t*(Weights + i)=tmp;\n\t}\n\tfclose(Weight);" + "\n\t////read Input" + "\n\t" + self.type + "* InModel = (" + self.type + "*)malloc((NumberOfPicture * d * " + str(self.model.layers[1].input.shape[2]) + " * " + str(self.model.layers[1].input.shape[1]) + ") * sizeof(" + self.type + "));\n\tFILE* Input = fopen(\"Input.txt\", \"r\");\n\tfor (int i = 0; i < " + "NumberOfPicture * d * " + str(self.model.layers[1].input.shape[2]) + " * " + str(self.model.layers[1].input.shape[1]) + "; i++){\n\t\tfscanf(Input, \"%f\", &tmp);\n\t\t*(InModel + i)=tmp;\n\t}\n\tfclose(Input);" + "\n\t//Read Label"  + "\n\t" + self.type + "*Label = (" + self.type + "*)malloc((NumberOfPicture) * sizeof(" + self.type + "));" + "\n\tFILE* Output = fopen(\"LabelTXT.txt\", \"r\");\n\tfor (int i = 0; i < NumberOfPicture ; i++)\n\t{\n\t\tfscanf(Output, \"%f\", &tmp);\n\t\t*(Label + i) = tmp;\n\t}\n\tfclose(Output);\n\t" + self.type + " OutArray[NumberOfPicture] = {};\n\t" + self.type + " Image[d * " + str(self.model.layers[1].input.shape[1]) + " * " + str(self.model.layers[1].input.shape[2]) + "] = {};\n\tfor (int i = 0; i < NumberOfPicture ; i++)\n\t{\n\t\tint startIndex = i * d * " + str(self.model.layers[1].input.shape[1]) + " * " + str(self.model.layers[1].input.shape[2]) + ";\n\t\tfor (int k = 0; k < d * " + str(self.model.layers[1].input.shape[1]) + " * " + str(self.model.layers[1].input.shape[2]) + "; k++)\n\t\t{\n\t\t\tImage[k] = *(InModel + startIndex + k);\n\t\t}\n\t\tCNN(Image, OutModel, Weights);\n\t\tOutArray[i] = OutModel;\n\t}\n\tfloat countTrue = 0;\n\tfor (int i = 0; i < NumberOfPicture; i++)\n\t{\n\t\tint labelValue = *(Label + i);\n\t\tif (labelValue == OutArray[i])\n\t\t{\n\t\t\tcountTrue = countTrue + 1;\n\t\t}\n\t}\n\tfloat accuracy = (float)((countTrue / NumberOfPicture) * 100);\n\tstd::cout << \"accuracy of Model: \" << accuracy << \"%\\n\";" + "\n\t//std::cout << \"Result: \" <<  OutModel <<  \"\\n\";" + "\n\treturn 0;\n}\n"
             if self.type == "fxp":
                 self.fxp_inc = self.fxp_include
             else:
