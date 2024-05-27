@@ -1,0 +1,10 @@
+void Padding_Conv2D_0(float input_Pad_Conv[784], float output_Pad_Conv[900]);
+void Conv2D_0(float Input_Conv[900],float Output_Conv[25088], float bias[32], float kernel[288]);
+void BatchNorm2D_0(float Input_BatchNorm[25088], float Output_BatchNorm[25088], float gamma[32], float beta[32], float MovMean[32], float MovVar[32]);
+void Padding_Conv2D_1(float input_Pad_Conv[6272], float output_Pad_Conv[8192]);
+void Conv2D_1(float Input_Conv[8192],float Output_Conv[6272], float bias[32], float kernel[9216]);
+void BatchNorm2D_1(float Input_BatchNorm[6272], float Output_BatchNorm[6272], float gamma[32], float beta[32], float MovMean[32], float MovVar[32]);
+void Padding_Conv2D_2(float input_Pad_Conv[6272], float output_Pad_Conv[8192]);
+void Conv2D_2(float Input_Conv[8192],float Output_Conv[6272], float bias[32], float kernel[9216]);
+void BatchNorm2D_2(float Input_BatchNorm[6272], float Output_BatchNorm[6272], float gamma[32], float beta[32], float MovMean[32], float MovVar[32]);
+void Activation0(float Input_Activation[6272], float Output_Activation[6272]);

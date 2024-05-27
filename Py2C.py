@@ -28,7 +28,7 @@ class Py2C:
         - Write_FixedPoint_Weights_File function is to create Fixed Point Weights file
     """
 
-    def __init__(self, model_path, type="fxp", fxp_para=(20,10), choose_only_output=True, resnet=False, num_layers_in_block=2,num_layers_before_block=2, num_blocks=1):
+    def __init__(self, model_path, type="float", fxp_para=(20,10), choose_only_output=True, resnet=False, num_layers_in_block=6,num_layers_before_block=3, num_blocks=1):
         self.model = tf.keras.models.load_model(model_path)
         assert fxp_para[0] > 0 and fxp_para[1] > 0, "the 1st or the 2nd Fxp Parameter must be more than zero!!!"
         assert fxp_para[0] >= fxp_para[1], "the 1st Fxp Parameter must be equal or more than the 2nd one!!!"
