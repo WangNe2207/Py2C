@@ -1,0 +1,1 @@
+Fix lỗi padding ở conv1d, thêm stride = 2 cho conv2d, thêm averagepooling, thêm activation, batchnorm cho 1D
