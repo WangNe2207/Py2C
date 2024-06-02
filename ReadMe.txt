@@ -5,31 +5,16 @@ bước 3: chạy main.py
 Bước 4: code sẽ xuất ra các đoạn code cpp và header file. Sau đó cho đoạn code được xuất ra vào project c++ để chạy(thay đổi hằng numberofpicture = số lượng input, hằng d = dimension của input.
 ********LƯU Ý: 
 
-
-~nếu gặp phải Unhandle Exception: stack overflow thì hãy mở rộng bộ nhớ stack theo hướng dẫn sau: 
-1) Open your Visual Studio project.
-2) Right-click on your project in the Solution Explorer and select "Properties" from the context menu.
-3) In the project properties window, navigate to "Configuration Properties" > "Linker" > "Command Line".
-4) In the "Additional Options" field, add /STACK:reserve[,commit], replacing reserve and commit with the desired values for stack size in bytes.For example, to reserve 4 MB of stack space with 1 MB initially committed, you can add /STACK:4194304,1048576.
-Click "OK" to apply the changes.
-
-
 ~code c++ xuất ra chỉ có thể chạy trên visual studio code.
 
 
-~ ở đối với input 1 dimension
-+ convolution  layer: không hỗ trợ padding, chỉ hỗ trợ activation relu
-+ chỉ hỗ trợ maxpooling layer(không averagepooling, ....), chỉ hỗ trợ stride = 2, poolsize = 2 và không hỗ trợ padding
-+ không batchnorm, activation layer, dropout
-
-
-
-~ đối với input 3 dimension
-+ convolution layer: có hỗ trợ padding, chỉ hỗ trợ activation relu
-+ chỉ hỗ trợ maxpooling layer(không averagepooling, ....), stride và pool size thoải mái và không hỗ trợ padding
-+ có đầy đủ batchnorm và activation layer ở cả lớp FC và convolutional
-+ không có dropout
-
+Các layer và Configuration của nó có thể dùng (Áp dụng cho cả Conv2d và conv1d)
++ convolution  layer (kernel_size, strides padding, activation relu)
++ maxpooling và AveragePooling (stride , poolsize)
++ Flatten (Không Configuration)
++ batchnorm (Không Configuration) ở cả lớp FC và convolutional
++ activation layer (Chỉ dùng được Relu) ở cả lớp FC và convolutional
++ dense(chỉ dùng được Relu)
 
 
 ~ không hỗ trợ model được viết bằng model.add
